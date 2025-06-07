@@ -122,10 +122,16 @@ jobs:
 
       - name: Tag image for ECR
         run: |
+          APP_VERSION=`grep -m2 '<version>' pom.xml | tail -1 | grep -oP '(?<=>).*(?=<)'`
+          echo $APP_VERSION
+
           docker tag geo_app:${{ github.sha }} ${{ steps.login-ecr.outputs.registry }}/geo_app:${{ github.sha }}
-          docker tag geo_app:${{ github.sha }} ${{ steps.login-ecr.outputs.registry }}/geo_app:latest
+          docker tag geo_app:${{ github.sha }} ${{ steps.login-ecr.outputs.registry }}/geo_app:$APP_VERSION
+          
 
       - name: Push Docker image to ECR
         run: |
+          APP_VERSION=`grep -m2 '<version>' pom.xml | tail -1 | grep -oP '(?<=>).*(?=<)'`
+          echo $APP_VERSION
           docker push ${{ steps.login-ecr.outputs.registry }}/geo_app:${{ github.sha }}
-          docker push ${{ steps.login-ecr.outputs.registry }}/geo_app:latest
+          docker push ${{ steps.login-ecr.outputs.registry }}/geo_app:$APP_VERSION
