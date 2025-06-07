@@ -5,10 +5,9 @@ on:
     branches:
       - main
 
-
 jobs:
   build:
-    name: Build
+    name: SonarQube Analysis
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -21,7 +20,6 @@ jobs:
           distribution: 'temurin'
           java-version: 17
           cache: 'maven'
-
 
       - name: Cache SonarQube packages
         uses: actions/cache@v4
