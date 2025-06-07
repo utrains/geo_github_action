@@ -1,5 +1,15 @@
-name: Sonar Cloud Analysis
-
+name: Geolocation App CI/CD
+# This workflow builds the project and runs SonarQube analysis on every push to the main branch.
+# It uses Maven for building and SonarQube for code quality analysis.
+# The workflow is triggered on pushes to the main branch.
+# It caches Maven dependencies and SonarQube analysis results to speed up the build process.
+# The SonarQube analysis requires a project key, which should be set in the secrets of the repository.
+# The workflow consists of two jobs: 'build' and 'sonar'.
+# The 'build' job compiles the project and runs tests, while the 'sonar' job performs the SonarQube analysis.
+# The 'sonar' job depends on the 'build' job, ensuring that the analysis runs only after a successful build.
+# The workflow uses JDK 17 and caches Maven packages to optimize build times.
+# The SonarQube analysis is configured to use the SonarQube server URL and authentication token stored in GitHub secrets.
+# The workflow is designed to run on an Ubuntu environment and uses the latest versions of the actions for checkout, Java setup, and caching. 
 on:
   push:
     branches:
@@ -34,7 +44,7 @@ jobs:
   sonar:
     name: SonarQube Analysis
     runs-on: ubuntu-latest
-    needs: build  # 👈 ensures this runs after 'build'
+    needs: build  # ensures this runs after 'build'
     steps:
       - uses: actions/checkout@v4
         with:
@@ -68,3 +78,37 @@ jobs:
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
         run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=geo_app # Replace 'geo_app' with your actual project key
 
+  docker:
+    name: Docker Build & Push to ECR
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build Docker image
+        run: |
+          docker build -t geo_app:${{ github.sha }} .
+
+      - name: Tag image for ECR
+        run: |
+          docker tag geo_app:${{ github.sha }} ${{ steps.login-ecr.outputs.registry }}/geo_app:${{ github.sha }}
+          docker tag geo_app:${{ github.sha }} ${{ steps.login-ecr.outputs.registry }}/geo_app:latest
+
+      - name: Push Docker image to ECR
+        run: |
+          docker push ${{ steps.login-ecr.outputs.registry }}/geo_app:${{ github.sha }}
+          docker push ${{ steps.login-ecr.outputs.registry }}/geo_app:latest
