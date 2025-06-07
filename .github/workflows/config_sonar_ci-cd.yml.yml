@@ -41,6 +41,16 @@ jobs:
       - name: Build with Maven
         run: mvn -B clean verify
 
+      - name: Package with Maven
+        run: mvn -B clean package
+
+      # Upload .jar file as an artifact
+      - name: Upload JAR file
+        uses: actions/upload-artifact@v4
+        with:
+          name: geo_app-jar
+          path: target/*.jar
+
   sonar:
     name: SonarQube Analysis
     runs-on: ubuntu-latest
@@ -94,6 +104,13 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
+      
+      # Download the JAR file artifact from the build job
+      - name: Download JAR file artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: geo_app-jar
+          path: target/
 
       - name: Login to Amazon ECR
         id: login-ecr
