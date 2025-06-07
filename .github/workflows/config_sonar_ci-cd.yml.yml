@@ -81,7 +81,7 @@ jobs:
   docker:
     name: Docker Build & Push to ECR
     runs-on: ubuntu-latest
-    needs: build
+    needs: sonar  # ensures this runs after 'sonar'
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4

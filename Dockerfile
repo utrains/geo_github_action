@@ -1,4 +1,4 @@
-FROM openjdk:8
+FROM openjdk:17
 ADD target/spring-boot-maven-plugin.jar spring-boot-maven-plugin.jar
 EXPOSE 8082
-ENTRYPORT ["-java","-jar","spring-boot-maven-plugin.jar"
+ENTRYPORT ["-java","-jar","spring-boot-maven-plugin.jar"]
