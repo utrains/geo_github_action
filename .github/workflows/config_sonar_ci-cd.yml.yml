@@ -173,9 +173,9 @@ jobs:
           APP_LONG_NAME=$APP_NAME-$APP_VERSION.jar
           echo $APP_LONG_NAME
           echo $MAVEN_USERNAME
-          echo curl -v --user $MAVEN_USERNAME:$MAVEN_PASSWORD -T target/$APP_LONG_NAME -X PUT "http://3.129.71.240:8081/artifactory/GEOLOCATION-GITHUB_ACTION/$APP_LONG_NAME"
-          curl -v --user $MAVEN_USERNAME:$MAVEN_PASSWORD -T target/$APP_LONG_NAME -X PUT "http://3.129.71.240:8081/artifactory/GEOLOCATION-GITHUB_ACTION/$APP_LONG_NAME"
-          #mvn deploy -DskipTests -DaltDeploymentRepository=central::default::http://3.129.71.240:8081/artifactory/GEOLOCATION-GITHUB_ACTION -X #-Dusername=user -Dpassword=pass
+          echo curl -v --user $MAVEN_USERNAME:$MAVEN_PASSWORD -T target/$APP_LONG_NAME -X PUT "http://35.87.79.167:8081/artifactory/GEOLOCATION-GITHUB_ACTION/$APP_LONG_NAME"
+          curl -v --user $MAVEN_USERNAME:$MAVEN_PASSWORD -T target/$APP_LONG_NAME -X PUT "http://35.87.79.167:8081/artifactory/GEOLOCATION-GITHUB_ACTION/$APP_LONG_NAME"
+          #mvn deploy -DskipTests -DaltDeploymentRepository=central::default::http://35.87.79.167:8081/artifactory/GEOLOCATION-GITHUB_ACTION -X #-Dusername=user -Dpassword=pass
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         GITHUB_USERNAME: ${{ github.actor }}
