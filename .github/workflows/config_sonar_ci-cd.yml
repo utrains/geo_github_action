@@ -2,9 +2,9 @@ name: Multi-Stage Example
 
 on:
   push:
-    branches: [ main ]
+    branches: [ TEST ]
   pull_request:
-    branches: [ main ]
+    branches: [ TEST ]
 
 jobs:
   build:
