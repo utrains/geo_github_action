@@ -10,7 +10,6 @@ jobs:
   build:
     name: Build Stage
     runs-on: ubuntu-latest
-
     steps:
       - name: Echo in Build
         run: echo "Running the Build stage..."
@@ -19,7 +18,6 @@ jobs:
     name: Test Stage
     needs: build
     runs-on: ubuntu-latest
-
     steps:
       - name: Echo in Test
         run: echo "Running the Test stage..."
@@ -29,7 +27,6 @@ jobs:
     needs: test
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/TEST' && github.event_name == 'push'
-
     steps:
       - name: Echo in Deploy
         run: echo "Running the Deploy stage..."
