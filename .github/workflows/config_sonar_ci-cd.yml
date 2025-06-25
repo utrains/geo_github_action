@@ -203,12 +203,13 @@ jobs:
     - name: Read secrets from Vault
       uses: hashicorp/vault-action@v2
       with:
-        url: https://vault.yourdomain.com
+        url: http://34.216.108.36:8082
         method: token
         token: ${{ secrets.VAULT_TOKEN }}
         secrets: |
-          secret/github-action/artifactory username | MAVEN_USERNAME
-          secret/github-action/artifactory password | MAVEN_PASSWORD
+          secrets/creds/jfrog username | MAVEN_USERNAME
+          secrets/creds/jfrog password | MAVEN_PASSWORD
+
 
     - name: Deploy to JFrog
       run: |
