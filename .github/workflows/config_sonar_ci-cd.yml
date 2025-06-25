@@ -201,7 +201,7 @@ jobs:
         path: target/
 
     - name: Read secrets from Vault
-      uses: hashicorp/vault-action@v2
+      uses: hashicorp/vault-action@v4
       with:
         url: http://34.216.108.36:8082
         method: token
@@ -209,7 +209,7 @@ jobs:
         secrets: |
           secrets/creds/jfrog username | MAVEN_USERNAME
           secrets/creds/jfrog password | MAVEN_PASSWORD
-
+          
 
     - name: Deploy to JFrog
       run: |
