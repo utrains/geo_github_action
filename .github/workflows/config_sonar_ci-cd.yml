@@ -201,7 +201,7 @@ jobs:
         path: target/
 
     - name: Read secrets from Vault
-      uses: hashicorp/vault-action@v4
+      uses: hashicorp/vault-action@v2
       with:
         url: http://34.216.108.36:8082
         method: token
