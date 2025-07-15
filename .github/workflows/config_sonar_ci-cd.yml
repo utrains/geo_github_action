@@ -10,6 +10,7 @@ name: Geolocation App CI/CD
 # The workflow uses JDK 17 and caches Maven packages to optimize build times.
 # The SonarQube analysis is configured to use the SonarQube server URL and authentication token stored in GitHub secrets.
 # The workflow is designed to run on an Ubuntu environment and uses the latest versions of the actions for checkout, Java setup, and caching. 
+
 on:
   push:
     branches:
