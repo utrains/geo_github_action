@@ -137,7 +137,6 @@ jobs:
           docker push ${{ steps.login-ecr.outputs.registry }}/geo_app:${{ github.sha }}
           docker push ${{ steps.login-ecr.outputs.registry }}/geo_app:$APP_VERSION
 
-
   deploy:
     name: Deploy to JFrog
     runs-on: self-hosted
