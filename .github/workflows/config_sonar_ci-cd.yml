@@ -19,7 +19,7 @@ on:
 jobs:
   build:
     name: Build Project
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
       - uses: actions/checkout@v4
         with:
@@ -54,7 +54,7 @@ jobs:
 
   sonar:
     name: SonarQube Analysis
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     needs: build  # ensures this runs after 'build'
     steps:
       - uses: actions/checkout@v4
@@ -91,7 +91,7 @@ jobs:
 
   docker:
     name: Docker Build & Push to ECR
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     needs: sonar  # ensures this runs after 'sonar'
     steps:
       - name: Checkout Code
@@ -140,7 +140,7 @@ jobs:
 
   deploy:
     name: Deploy to JFrog
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     #needs: sonar  # ensures this runs after 'sonar'
 
     needs: build
@@ -186,7 +186,7 @@ jobs:
   
 
   deploy_jfrog:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     needs: build
 
     steps:
