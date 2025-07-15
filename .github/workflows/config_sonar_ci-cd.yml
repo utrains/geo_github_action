@@ -211,7 +211,6 @@ jobs:
           secrets/creds/jfrog username | MAVEN_USERNAME
           secrets/creds/jfrog password | MAVEN_PASSWORD
           
-
     - name: Deploy to JFrog
       run: |
         APP_VERSION=`grep -m2 '<version>' pom.xml | tail -1 | grep -oP '(?<=>).*(?=<)'`
