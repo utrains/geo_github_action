@@ -11,7 +11,6 @@ name: Geolocation App CI/CD
 # The SonarQube analysis is configured to use the SonarQube server URL and authentication token stored in GitHub secrets.
 # The workflow is designed to run on an Ubuntu environment and uses the latest versions of the actions for checkout, Java setup, and caching. 
 
-
 on:
   push:
     branches:
