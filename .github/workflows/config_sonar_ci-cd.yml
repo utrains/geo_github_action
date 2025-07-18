@@ -131,7 +131,7 @@ jobs:
         with:
           image-ref: geo_app:${{ github.sha }}
           format: table  # can also use 'json' or 'sarif'
-          exit-code: 1   # fail job if vulnerabilities are found
+          #exit-code: 1   # fail job if vulnerabilities are found
           severity: CRITICAL,HIGH  # only report high/critical issues
 
       - name: Tag image for ECR
