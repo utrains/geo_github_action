@@ -108,7 +108,7 @@ jobs:
         with:
           role-to-assume: ${{ secrets.ECR_ACESS_ROLE }}
           aws-region: ${{ secrets.AWS_REGION }}
-      
+
       # Download the JAR file artifact from the build job
       - name: Download JAR file artifact
         uses: actions/download-artifact@v4
