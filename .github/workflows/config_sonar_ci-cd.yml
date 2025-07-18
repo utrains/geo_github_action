@@ -144,7 +144,7 @@ jobs:
           name: geo_app-jar
           path: target/
 
-      # 🔐 Load secrets from Vault and set as env variables for rest of job
+      # Load secrets from Vault and set as env variables for rest of job
       - name: Read secrets from Vault
         uses: hashicorp/vault-action@v2
         with:
@@ -153,7 +153,7 @@ jobs:
           token: ${{ secrets.VAULT_TOKEN }}
           exportEnv: true
           secrets: |
-            secrets/creds/jfrog username | MAVEN_USERNAME_A
+            secrets/creds/jfrog username | MAVEN_USERNAME_A ;
             secrets/creds/jfrog password | MAVEN_PASSWORD_A
 
       - name: Deploy to JFrog
