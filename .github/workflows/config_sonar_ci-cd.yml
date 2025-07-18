@@ -85,7 +85,16 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ env.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ env.SONAR_HOST_URL }}
-        run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=geo_app
+        run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=geo_app -Dsonar.qualitygate.wait=true # Replace 'geo_app' with your actual project key
+      
+      - name: Verify Quality Gate Status
+        uses: SonarSource/sonarqube-quality-gate-action@v2
+        with:
+            sonarToken: ${{ secrets.SONAR_TOKEN }}
+            timeoutMinutes: 5
+            sleepTime: 10  # Seconds between status checks
+    
+
 
   docker:
     runs-on: ubuntu-latest
