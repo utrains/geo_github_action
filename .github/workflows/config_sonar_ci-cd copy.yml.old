@@ -20,7 +20,6 @@ permissions:
   id-token: write
   contents: read
 
-
 jobs:
   build:
     name: Build Project
@@ -93,7 +92,7 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
         run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=geo_app # Replace 'geo_app' with your actual project key
-      
+
   docker:
     name: Docker Build & Push to ECR
     runs-on: ubuntu-latest
@@ -161,9 +160,22 @@ jobs:
 
     - name: Deploy to JFROG
       run: |
+          echo $GIT_HUB_TOKEN
+          echo $GITHUB_USERNAME
+          pwd
+          ls
           APP_VERSION=`grep -m2 '<version>' pom.xml | tail -1 | grep -oP '(?<=>).*(?=<)'`
+          echo $APP_VERSION
+
           APP_NAME=`grep -m2 '<artifactId>' pom.xml | tail -1 | grep -oP '(?<=>).*(?=<)'`
+          echo $APP_NAME
+
           APP_LONG_NAME=$APP_NAME-$APP_VERSION.jar
+          echo $APP_LONG_NAME
+          echo $MAVEN_USERNAME
+          ls target
+          
+          echo curl -v --user $MAVEN_USERNAME:$MAVEN_PASSWORD -T target/$APP_LONG_NAME -X PUT "$ARTIFACTORY_URL/artifactory/GEOLOCATION-GITHUB_ACTION/$APP_LONG_NAME"
           curl -v --user $MAVEN_USERNAME:$MAVEN_PASSWORD -T target/$APP_LONG_NAME -X PUT "$ARTIFACTORY_URL/artifactory/GEOLOCATION-GITHUB_ACTION/$APP_LONG_NAME"
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
