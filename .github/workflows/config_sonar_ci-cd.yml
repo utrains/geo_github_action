@@ -69,8 +69,7 @@ jobs:
       - name: Cache SonarQube packages
         uses: actions/cache@v4
         with:
-          #path: ~/.sonar/cache
-          path:  .scannerwork/
+          path: ~/.sonar/cache
           key: ${{ runner.os }}-sonar
           restore-keys: ${{ runner.os }}-sonar
 
@@ -91,6 +90,7 @@ jobs:
       - name: Verify Quality Gate Status
         uses: sonarsource/sonarqube-quality-gate-action@master
         with:
+            scanMetadataReportFile: .scannerwork/report-task.txt
             sonarToken: ${{ secrets.SONAR_TOKEN }}
             timeoutMinutes: 5
             sleepTime: 10  # Seconds between status checks
