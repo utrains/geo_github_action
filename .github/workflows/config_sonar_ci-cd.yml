@@ -142,40 +142,11 @@ jobs:
           docker push ${{ steps.login-ecr.outputs.registry }}/geo_app:${{ github.sha }}
           docker push ${{ steps.login-ecr.outputs.registry }}/geo_app:$APP_VERSION
 
-  deploy:
-    name: Deploy to JFrog
-    runs-on: ubuntu-latest
-    # ensures this runs after 'sonar'
-    needs: sonar
-    steps:
-    - name: Checkout Code
-      uses: actions/checkout@v4
-      with:
-        fetch-depth: 0
-    
-    - name: Download JAR file artifact
-      uses: actions/download-artifact@v4
-      with:
-        name: geo_app-jar
-        path: target/
-
-    - name: Deploy to JFROG
-      run: |
-          APP_VERSION=`grep -m2 '<version>' pom.xml | tail -1 | grep -oP '(?<=>).*(?=<)'`
-          APP_NAME=`grep -m2 '<artifactId>' pom.xml | tail -1 | grep -oP '(?<=>).*(?=<)'`
-          APP_LONG_NAME=$APP_NAME-$APP_VERSION.jar
-          curl -v --user $MAVEN_USERNAME:$MAVEN_PASSWORD -T target/$APP_LONG_NAME -X PUT "$ARTIFACTORY_URL/artifactory/GEOLOCATION-GITHUB_ACTION/$APP_LONG_NAME"
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        GITHUB_USERNAME: ${{ github.actor }}
-        MAVEN_USERNAME: ${{ secrets.ARTIFACTORY_USERNAME }}
-        MAVEN_PASSWORD: ${{ secrets.ARTIFACTORY_PASSWORD }} 
-        ARTIFACTORY_URL: ${{ secrets.ARTIFACT_URL }}
   
 
-  deploy_jfrog_using_vault:
+  deploy:
     runs-on: ubuntu-latest
-    needs: build
+    needs: sonar  # ensures this runs after 'sonar'
 
     steps:
     - name: Checkout Code
