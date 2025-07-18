@@ -202,7 +202,7 @@ jobs:
     - name: Read secrets from Vault
       uses: hashicorp/vault-action@v2
       with:
-        url: http://34.216.108.36:8082
+        url: http://52.32.151.162:8200
         method: token
         token: ${{ secrets.VAULT_TOKEN }}
         secrets: |
