@@ -9,7 +9,7 @@ name: Geolocation App CI/CD
 # The 'sonar' job depends on the 'build' job, ensuring that the analysis runs only after a successful build.
 # The workflow uses JDK 17 and caches Maven packages to optimize build times.
 # The SonarQube analysis is configured to use the SonarQube server URL and authentication token stored in GitHub secrets.
-# The workflow is designed to run on an Ubuntu environment and uses the latest versions of the actions for checkout, Java setup, and caching. 
+# The workflow is designed to run on an Ubuntu environment and uses the latest versions of the actions for checkout, Java setup, and caching.
 
 on:
   push:
@@ -103,6 +103,7 @@ jobs:
         with:
           fetch-depth: 0
 
+      # Use OIDC Role for this repo
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -143,11 +144,8 @@ jobs:
   deploy:
     name: Deploy to JFrog
     runs-on: ubuntu-latest
-    #needs: sonar  # ensures this runs after 'sonar'
-
-    needs: build
-    #runs-on: ubuntu-latest
-    
+    # ensures this runs after 'sonar'
+    needs: sonar
     steps:
     - name: Checkout Code
       uses: actions/checkout@v4
@@ -187,7 +185,7 @@ jobs:
         ARTIFACTORY_URL: ${{ secrets.ARTIFACT_URL }}
   
 
-  deploy_jfrog:
+  deploy_jfrog_using_vault:
     runs-on: ubuntu-latest
     needs: build
 
