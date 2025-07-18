@@ -207,8 +207,8 @@ jobs:
         token: ${{ secrets.VAULT_TOKEN }}
         exportEnv: true
         secrets: |
-          secrets/creds/jfrog username | MAVEN_USERNAME
-          secrets/creds/jfrog password | MAVEN_PASSWORD
+          secrets/creds/jfrog username | MAVEN_USERNAME_A
+          secrets/creds/jfrog password | MAVEN_PASSWORD_A
 
           
     - name: Deploy to JFrog
@@ -219,8 +219,8 @@ jobs:
 
         echo "Deploying $APP_LONG_NAME"
 
-        curl -v --user $MAVEN_USERNAME:$MAVEN_PASSWORD -T target/$APP_LONG_NAME -X PUT "$ARTIFACTORY_URL/artifactory/EOLOCATION-GITHUB_ACTION/$APP_LONG_NAME"
+        curl -v --user $MAVEN_USERNAME_A:$MAVEN_PASSWORD_A -T target/$APP_LONG_NAME -X PUT "$ARTIFACTORY_URL/artifactory/EOLOCATION-GITHUB_ACTION/$APP_LONG_NAME"
       env:
         ARTIFACTORY_URL: ${{ secrets.ARTIFACT_URL }}
-        MAVEN_USERNAME: ${{ env.MAVEN_USERNAME }}
-        MAVEN_PASSWORD: ${{ env.MAVEN_PASSWORD }}
+        MAVEN_USERNAME_A: ${{ env.MAVEN_USERNAME_A }}
+        MAVEN_PASSWORD_A: ${{ env.MAVEN_PASSWORD_A }}
