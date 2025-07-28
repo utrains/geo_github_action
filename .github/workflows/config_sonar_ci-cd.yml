@@ -196,41 +196,7 @@ jobs:
             -T target/$APP_LONG_NAME \
             -X PUT "$ARTIFACTORY_URL/artifactory/GEOLOCATION-GITHUB_ACTION/$APP_LONG_NAME"
 
-  helm-deploy:
-    runs-on: ubuntu-latest
-    needs: docker
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
-
-      # - name: Configure AWS Credentials for EKS
-      #   uses: aws-actions/configure-aws-credentials@v4
-      #   with:
-      #     role-to-assume: ${{ env.ECR_ROLE }}
-      #     aws-region: ${{ env.AWS_REGION }}
-
-      # - name: Update kubeconfig
-      #   run: |
-      #     aws eks update-kubeconfig \
-      #       --region ${{ env.AWS_REGION }} \
-      #       --name ${{ secrets.EKS_CLUSTER_NAME }}
-
-      - name: Set up Helm
-        uses: azure/setup-helm@v4
-
-      - name: Deploy with Helm
-        env:
-          ECR_REGISTRY: ${{ needs.docker.outputs.ecr_registry || 'REPLACE_IF_NEEDED' }}
-        run: |
-          echo $ECR_REGISTRY
-          APP_VERSION=$(grep -m2 '<version>' pom.xml | tail -1 | grep -oP '(?<=>).*(?=<)')
-          echo $APP_VERSION
-          # helm upgrade --install geo-app ./charts/geo-app \
-          #   --namespace default \
-          #   --create-namespace \
-          #   --set image.repository=${{ steps.login-ecr.outputs.registry }}/geo_app \
-          #   --set image.tag=${{ github.sha }}
-
+ 
   helm-chart-create:
     name: Create and Upload Helm Chart
     runs-on: ubuntu-latest
@@ -250,6 +216,9 @@ jobs:
           echo "APP_NAME=$(grep -m2 '<artifactId>' pom.xml | tail -1 | grep -oP '(?<=>).*(?=<)')" >> $GITHUB_ENV
           echo "CHART_NAME=geo-app-chart" >> $GITHUB_ENV
           echo "IMAGE_REPO=${{ needs.docker.outputs.ecr_registry }}/geo_app" >> $GITHUB_ENV
+      
+      - name: Debug ECR Output
+        run: echo "ECR registry:${{ needs.docker.outputs.ecr_registry }}"
 
       - name: Create Helm chart
         run: helm create $CHART_NAME
