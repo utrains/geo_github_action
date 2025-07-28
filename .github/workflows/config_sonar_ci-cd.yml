@@ -17,7 +17,6 @@ env:
   ECR_ROLE: ${{ secrets.ECR_ACESS_ROLE }}
   AWS_REGION: ${{ secrets.AWS_REGION }}
   VAULT_URL: ${{ secrets.VAULT_URL }}
-  VAULT_TOKEN: ${{ secrets.VAULT_TOKEN }}
 
   # Variables with default values
   HELM_REPO: ${{ secrets.HELM_REPO || 'utrains-helm' }}
@@ -175,9 +174,9 @@ jobs:
       - name: Read secrets from Vault
         uses: hashicorp/vault-action@v2
         with:
-          url: $VAULT_URL
+          url: ${{ secrets.VAULT_URL }}
           method: token
-          token: $VAULT_TOKEN
+          token: ${{ secrets.VAULT_TOKEN }}
           exportEnv: true
           secrets: |
             secrets/creds/jfrog username | MAVEN_USERNAME_A ;
@@ -272,18 +271,18 @@ jobs:
       - name: Read secrets from Vault
         uses: hashicorp/vault-action@v2
         with:
-          url: $VAULT_URL
+          url: ${{ secrets.VAULT_URL }}
           method: token
-          token: $VAULT_TOKEN
+          token: ${{ secrets.VAULT_TOKEN }}
           exportEnv: true
           secrets: |
             secrets/creds/jfrog username | MAVEN_USERNAME_A ;
             secrets/creds/jfrog password | MAVEN_PASSWORD_A
-      
+
       - name: Upload chart to Artifactory
         env:
-          MAVEN_USERNAME_A: ${{ secrets.MAVEN_USERNAME_A }}
-          MAVEN_PASSWORD_A: ${{ secrets.MAVEN_PASSWORD_A }}
+          MAVEN_USERNAME_A: ${{ env.MAVEN_USERNAME_A }}
+          MAVEN_PASSWORD_A: ${{ env.MAVEN_PASSWORD_A }}
           ARTIFACTORY_URL: ${{ secrets.ARTIFACT_URL }}
         run: |
           curl -v --user $MAVEN_USERNAME_A:$MAVEN_PASSWORD_A \
