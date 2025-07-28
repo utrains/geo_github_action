@@ -17,6 +17,10 @@ env:
   ECR_ROLE: ${{ secrets.ECR_ACESS_ROLE }}
   AWS_REGION: ${{ secrets.AWS_REGION }}
 
+  # Variables with default values
+  HELM_REPO: ${{ secrets.HELM_REPO || utrains-helm }}'
+
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -271,6 +275,4 @@ jobs:
         run: |
           curl -v --user $MAVEN_USERNAME_A:$MAVEN_PASSWORD_A \
             -T ${CHART_NAME}-0.1.0.tgz \
-            "$ARTIFACTORY_URL/artifactory/helm-local/${CHART_NAME}-0.1.0.tgz"
-
-
+            "$ARTIFACTORY_URL/artifactory/$HELM_REPO/${CHART_NAME}-0.1.0.tgz"
