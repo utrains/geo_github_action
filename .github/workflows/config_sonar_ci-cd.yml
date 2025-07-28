@@ -210,19 +210,20 @@ jobs:
           sudo snap install helm --classic
           sudo snap install yq
 
-      - name: 
-        
-
-      - name: Set up environment variables
+      - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ env.ECR_ROLE }}
           aws-region: ${{ env.AWS_REGION }}
+
+      - name: Set up environment variables
         run: |
           echo "APP_VERSION=$(grep -m2 '<version>' pom.xml | tail -1 | grep -oP '(?<=>).*(?=<)')" >> $GITHUB_ENV
           echo "APP_NAME=$(grep -m2 '<artifactId>' pom.xml | tail -1 | grep -oP '(?<=>).*(?=<)')" >> $GITHUB_ENV
           echo "CHART_NAME=geo-app-chart" >> $GITHUB_ENV
           echo "IMAGE_REPO=${{ needs.docker.outputs.ecr_registry }}/geo_app" >> $GITHUB_ENV
+
+          
       
       - name: Debug ECR Output
         run: echo "ECR registry:${{ needs.docker.outputs.ecr_registry }}"
