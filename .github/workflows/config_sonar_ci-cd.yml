@@ -16,6 +16,10 @@ env:
   SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
   ECR_ROLE: ${{ secrets.ECR_ACESS_ROLE }}
   AWS_REGION: ${{ secrets.AWS_REGION }}
+  VAULT_URL: ${{ secrets.VAULT_URL }}
+  VAULT_TOKEN: ${{ secrets.VAULT_TOKEN }}
+  MAVEN_USERNAME_A: ${{ env.MAVEN_USERNAME_A }}
+  MAVEN_PASSWORD_A: ${{ env.MAVEN_PASSWORD_A }}
 
   # Variables with default values
   HELM_REPO: ${{ secrets.HELM_REPO || 'utrains-helm' }}
@@ -173,18 +177,17 @@ jobs:
       - name: Read secrets from Vault
         uses: hashicorp/vault-action@v2
         with:
-          url: http://52.32.151.162:8200
+          url: $VAULT_URL
           method: token
-          token: ${{ secrets.VAULT_TOKEN }}
+          token: $VAULT_TOKEN
           exportEnv: true
           secrets: |
             secrets/creds/jfrog username | MAVEN_USERNAME_A ;
             secrets/creds/jfrog password | MAVEN_PASSWORD_A
 
       - name: Deploy to JFrog
-        env:
-          MAVEN_USERNAME_A: ${{ env.MAVEN_USERNAME_A }}
-          MAVEN_PASSWORD_A: ${{ env.MAVEN_PASSWORD_A }}
+    
+          
         run: |
           APP_VERSION=$(grep -m2 '<version>' pom.xml | tail -1 | grep -oP '(?<=>).*(?=<)')
           APP_NAME=$(grep -m2 '<artifactId>' pom.xml | tail -1 | grep -oP '(?<=>).*(?=<)')
@@ -266,6 +269,17 @@ jobs:
 
       - name: Package Helm chart
         run: helm package $CHART_NAME
+      
+      - name: Read secrets from Vault
+        uses: hashicorp/vault-action@v2
+        with:
+          url: $VAULT_URL
+          method: token
+          token: $VAULT_TOKEN
+          exportEnv: true
+          secrets: |
+            secrets/creds/jfrog username | MAVEN_USERNAME_A ;
+            secrets/creds/jfrog password | MAVEN_PASSWORD_A
 
       - name: Upload chart to Artifactory
         env:
