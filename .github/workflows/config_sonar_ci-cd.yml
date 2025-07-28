@@ -219,11 +219,12 @@ jobs:
         run: |
           echo $ECR_REGISTRY
           APP_VERSION=$(grep -m2 '<version>' pom.xml | tail -1 | grep -oP '(?<=>).*(?=<)')
-          helm upgrade --install geo-app ./charts/geo-app \
-            --namespace default \
-            --create-namespace \
-            --set image.repository=${{ steps.login-ecr.outputs.registry }}/geo_app \
-            --set image.tag=${{ github.sha }}
+          echo $APP_VERSION
+          # helm upgrade --install geo-app ./charts/geo-app \
+          #   --namespace default \
+          #   --create-namespace \
+          #   --set image.repository=${{ steps.login-ecr.outputs.registry }}/geo_app \
+          #   --set image.tag=${{ github.sha }}
 
 
   # k8s-deploy:
