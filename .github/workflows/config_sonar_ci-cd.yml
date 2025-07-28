@@ -210,7 +210,14 @@ jobs:
           sudo snap install helm --classic
           sudo snap install yq
 
+      - name: 
+        
+
       - name: Set up environment variables
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ env.ECR_ROLE }}
+          aws-region: ${{ env.AWS_REGION }}
         run: |
           echo "APP_VERSION=$(grep -m2 '<version>' pom.xml | tail -1 | grep -oP '(?<=>).*(?=<)')" >> $GITHUB_ENV
           echo "APP_NAME=$(grep -m2 '<artifactId>' pom.xml | tail -1 | grep -oP '(?<=>).*(?=<)')" >> $GITHUB_ENV
@@ -223,7 +230,7 @@ jobs:
       - name: Create Helm chart
         run: helm create $CHART_NAME
 
-      - name: Customize Helm chart
+      - name: Customize Helm chart - set variales and remove unnecessary files
         run: |
           rm -rf $CHART_NAME/templates/tests
           rm -f $CHART_NAME/templates/hpa.yaml $CHART_NAME/templates/ingress.yaml $CHART_NAME/templates/serviceaccount.yaml
