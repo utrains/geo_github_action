@@ -226,38 +226,51 @@ jobs:
           #   --set image.repository=${{ steps.login-ecr.outputs.registry }}/geo_app \
           #   --set image.tag=${{ github.sha }}
 
+  helm-chart-create:
+    name: Create and Upload Helm Chart
+    runs-on: ubuntu-latest
+    needs: docker
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-  # k8s-deploy:
-  #   runs-on: ubuntu-latest
+      - name: Set up Helm and yq
+        run: |
+          sudo snap install helm --classic
+          sudo snap install yq
 
-  #   steps:
-  #     - name: Checkout source
-  #       uses: actions/checkout@v3
+      - name: Set up environment variables
+        run: |
+          echo "APP_VERSION=$(grep -m2 '<version>' pom.xml | tail -1 | grep -oP '(?<=>).*(?=<)')" >> $GITHUB_ENV
+          echo "APP_NAME=$(grep -m2 '<artifactId>' pom.xml | tail -1 | grep -oP '(?<=>).*(?=<)')" >> $GITHUB_ENV
+          echo "CHART_NAME=geo-app-chart" >> $GITHUB_ENV
+          echo "IMAGE_REPO=${{ needs.docker.outputs.ecr_registry }}/geo_app" >> $GITHUB_ENV
 
+      - name: Create Helm chart
+        run: helm create $CHART_NAME
 
-  #     - name: Configure AWS credentials
-  #       uses: aws-actions/configure-aws-credentials@v2
-  #       with:
-  #         role-to-assume: ${{ env.ECR_ROLE }}
-  #         aws-region: ${{ env.AWS_REGION }}
+      - name: Customize Helm chart
+        run: |
+          rm -rf $CHART_NAME/templates/tests
+          rm -f $CHART_NAME/templates/hpa.yaml $CHART_NAME/templates/ingress.yaml $CHART_NAME/templates/serviceaccount.yaml
 
-  #     - name: Login to Amazon ECR
-  #       id: login-ecr
-  #       uses: aws-actions/amazon-ecr-login@v2
+          yq e '.version = "0.1.0" | .appVersion = env(APP_VERSION)' -i $CHART_NAME/Chart.yaml
 
-  #     - name: Update kubeconfig
-  #       run: |
-  #         aws eks update-kubeconfig --region ${{ secrets.AWS_REGION }} --name ${{ secrets.EKS_CLUSTER_NAME }}
+          yq e '.image.repository = env(IMAGE_REPO) |
+                .image.tag = env(APP_VERSION) |
+                .image.pullPolicy = "IfNotPresent"' -i $CHART_NAME/values.yaml
 
-  #     - name: Set up Helm
-  #       uses: azure/setup-helm@v4
+      - name: Package Helm chart
+        run: helm package $CHART_NAME
 
-  #     - name: Deploy with Helm
-  #       env:
-  #         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-  #         IMAGE_TAG: ${{ github.sha }}
-  #       run: |
-  #         helm upgrade --install springboot-app ./charts/springboot-app \
-  #           --set image.repository=$ECR_REGISTRY/$ECR_REPO_NAME \
-  #           --set image.tag=$IMAGE_TAG
+      - name: Upload chart to Artifactory
+        env:
+          MAVEN_USERNAME_A: ${{ secrets.MAVEN_USERNAME_A }}
+          MAVEN_PASSWORD_A: ${{ secrets.MAVEN_PASSWORD_A }}
+          ARTIFACTORY_URL: ${{ secrets.ARTIFACT_URL }}
+        run: |
+          curl -v --user $MAVEN_USERNAME_A:$MAVEN_PASSWORD_A \
+            -T ${CHART_NAME}-0.1.0.tgz \
+            "$ARTIFACTORY_URL/artifactory/helm-local/${CHART_NAME}-0.1.0.tgz"
+
 
