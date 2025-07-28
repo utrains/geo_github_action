@@ -18,7 +18,7 @@ env:
   AWS_REGION: ${{ secrets.AWS_REGION }}
 
   # Variables with default values
-  HELM_REPO: ${{ secrets.HELM_REPO || utrains-helm }}'
+  HELM_REPO: ${{ secrets.HELM_REPO || utrains-helm }}
 
 
 jobs:
