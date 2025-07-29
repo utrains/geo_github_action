@@ -153,6 +153,7 @@ jobs:
           APP_VERSION=$(grep -m2 '<version>' pom.xml | tail -1 | grep -oP '(?<=>).*(?=<)')
           docker push ${{ steps.login-ecr.outputs.registry }}/geo_app:${{ github.sha }}
           docker push ${{ steps.login-ecr.outputs.registry }}/geo_app:$APP_VERSION
+          echo ${{ steps.login-ecr.outputs.registry }}/geo_app:$APP_VERSION
 
   deploy:
     runs-on: ubuntu-latest
