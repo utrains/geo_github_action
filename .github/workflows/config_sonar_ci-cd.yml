@@ -155,7 +155,10 @@ jobs:
           docker push ${{ steps.login-ecr.outputs.registry }}/geo_app:${{ github.sha }}
           docker push ${{ steps.login-ecr.outputs.registry }}/geo_app:$APP_VERSION
           HELM_REPO_OL=`echo ${{ steps.login-ecr.outputs.registry }}/geo_app:$APP_VERSION` 
-          echo $HELM_REPO_OL
+          echo $HELM_REPO_OL >> $GITHUB_ENV
+          echo 'TESTING HELM_REPO_OL'
+
+          cat $GITHUB_ENV
 
   deploy:
     runs-on: ubuntu-latest
@@ -269,3 +272,4 @@ jobs:
           curl -v --user $MAVEN_USERNAME_A:$MAVEN_PASSWORD_A \
             -T ${CHART_NAME}-0.1.0.tgz \
             "$ARTIFACTORY_URL/artifactory/$HELM_REPO/${CHART_NAME}-0.1.0.tgz"
+          cat $GITHUB_ENV
