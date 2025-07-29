@@ -221,7 +221,7 @@ jobs:
           echo "APP_VERSION=$(grep -m2 '<version>' pom.xml | tail -1 | grep -oP '(?<=>).*(?=<)')" >> $GITHUB_ENV
           echo "APP_NAME=$(grep -m2 '<artifactId>' pom.xml | tail -1 | grep -oP '(?<=>).*(?=<)')" >> $GITHUB_ENV
           echo "CHART_NAME=geo-app-chart" >> $GITHUB_ENV
-          echo "IMAGE_REPO=${{ needs.docker.outputs.ecr_registry }}/geo_app" >> $GITHUB_ENV
+          echo "IMAGE_REPO=${{ ecr_registry }}/geo_app" >> $GITHUB_ENV
           cat $GITHUB_ENV
 
           
