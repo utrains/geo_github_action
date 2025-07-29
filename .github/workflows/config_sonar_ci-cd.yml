@@ -155,8 +155,8 @@ jobs:
           docker push ${{ steps.login-ecr.outputs.registry }}/geo_app:${{ github.sha }}
           docker push ${{ steps.login-ecr.outputs.registry }}/geo_app:$APP_VERSION
           HELM_REPO_OL=`echo ${{ steps.login-ecr.outputs.registry }}/geo_app:$APP_VERSION` 
-          echo $HELM_REPO_OL >> $GITHUB_ENV
-          echo 'TESTING HELM_REPO_OL'
+          echo "HELM_REPO_OL=$HELM_REPO_OL" >> $GITHUB_ENV
+          
 
   deploy:
     runs-on: ubuntu-latest
