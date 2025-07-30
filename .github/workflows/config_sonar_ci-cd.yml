@@ -74,6 +74,9 @@ jobs:
           echo "ACCOUNT_ID=$ACCOUNT_ID" >> $GITHUB_ENV
           echo "account_id=$ACCOUNT_ID" >> $GITHUB_OUTPUT
           echo $ACCOUNT_ID
+          cat $GITHUB_ENV
+          echo "------------------------------------------------"
+          cat $GITHUB_OUTPUT
 
   # sonar:
   #   runs-on: ubuntu-latest
