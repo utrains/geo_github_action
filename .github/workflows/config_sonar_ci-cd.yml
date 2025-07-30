@@ -20,7 +20,8 @@ env:
 
   # Variables with default values
   HELM_REPO: ${{ secrets.HELM_REPO || 'utrains-helm' }}
-
+  ECR_PATH: 'dkr.ecr'
+  AWS_DOMAIN: 'amazonaws.com'
 
 jobs:
   build:
@@ -234,7 +235,10 @@ jobs:
           echo "APP_VERSION=$(grep -m2 '<version>' pom.xml | tail -1 | grep -oP '(?<=>).*(?=<)')" >> $GITHUB_ENV
           echo "APP_NAME=$(grep -m2 '<artifactId>' pom.xml | tail -1 | grep -oP '(?<=>).*(?=<)')" >> $GITHUB_ENV
           echo "CHART_NAME=geo-app-chart" >> $GITHUB_ENV
-          echo "IMAGE_REPO=${{ needs.docker.outputs.ecr_registry }}/geo_app" >> $GITHUB_ENV
+          echo "885684264653.dkr.ecr.us-west-2.amazonaws.com/geo_app:1.0.5"
+          
+          echo "IMAGE_REPO=$ACCOUNT_ID.$ECR_PATH.${{ secrets.AWS_REGION }}.$AWS_DOMAIN/geo_app" >> $GITHUB_ENV
+          echo "$IMAGE_REPO"
 
           
       
