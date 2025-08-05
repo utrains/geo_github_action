@@ -65,9 +65,7 @@ jobs:
           echo "Manual update from CI at $(date)" >> MANUAL_COMMIT.md
           git add MANUAL_COMMIT.md
 
-          git -c user.name="github-actions[bot]" \
-              -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \
-              commit -m "Manual commit from CI workflow"
+          git commit -m "Manual commit from CI workflow"
 
           git push origin $NEW_BRANCH
 
