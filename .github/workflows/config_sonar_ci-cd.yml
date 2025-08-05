@@ -261,7 +261,7 @@ jobs:
       - name: Create and commit metadata
         run: |
           ACTOR="${GITHUB_ACTOR}"
-          NEW_BRANCH="PROD"
+          NEW_BRANCH="PROD1"
           git checkout -b $NEW_BRANCH
 
           echo "Recording metadata for workflow run..."
