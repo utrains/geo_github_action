@@ -2,6 +2,10 @@ package com.spring.bioMedical.Controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 
 /**
  * 
@@ -12,10 +16,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 public class LoginController {
 
+	@Value("${app.version}")
+    private String appVersion;
 
 	@RequestMapping("/showMyLoginPage")
-	public String showHome()
+	public String showHome(Model model)
 	{
+		model.addAttribute("version", appVersion);
 		
 		return "login";
 	}
