@@ -24,11 +24,38 @@ env:
   AWS_DOMAIN: 'amazonaws.com'
 
 jobs:
-  create-branch-and-commit:
+  build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: 17
+          cache: 'maven'
+
+      - name: Cache Maven packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
+
+      - name: Build with Maven
+        run: mvn -B clean verify
+
+      - name: Package with Maven
+        run: mvn -B clean package
+
+      - name: Upload JAR file
+        uses: actions/upload-artifact@v4
+        with:
+          name: geo_app-jar
+          path: target/*.jar
 
       - name: Create and commit to new branch
         run: |
@@ -43,40 +70,6 @@ jobs:
               commit -m "Manual commit from CI workflow"
 
           git push origin $NEW_BRANCH
-
-# jobs:
-#   build:
-#     runs-on: ubuntu-latest
-#     steps:
-#       - uses: actions/checkout@v4
-#         with:
-#           fetch-depth: 0
-
-#       - name: Set up JDK 17
-#         uses: actions/setup-java@v3
-#         with:
-#           distribution: 'temurin'
-#           java-version: 17
-#           cache: 'maven'
-
-#       - name: Cache Maven packages
-#         uses: actions/cache@v4
-#         with:
-#           path: ~/.m2
-#           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-#           restore-keys: ${{ runner.os }}-m2
-
-#       - name: Build with Maven
-#         run: mvn -B clean verify
-
-#       - name: Package with Maven
-#         run: mvn -B clean package
-
-#       - name: Upload JAR file
-#         uses: actions/upload-artifact@v4
-#         with:
-#           name: geo_app-jar
-#           path: target/*.jar
 
   # sonar:
   #   runs-on: ubuntu-latest
