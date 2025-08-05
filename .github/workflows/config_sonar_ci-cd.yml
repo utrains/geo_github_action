@@ -266,14 +266,10 @@ jobs:
 
           echo "Recording metadata for workflow run..."
 
-          cat <<EOF > ACTOR_METADATA.md
-          Triggered by:    ${ACTOR}
-          Workflow:        ${GITHUB_WORKFLOW}
-          Repo:            ${GITHUB_REPOSITORY}
-          Branch:          ${GITHUB_REF_NAME}
-          Commit SHA:      ${GITHUB_SHA}
-          Run ID:          ${GITHUB_RUN_ID}
-          Run Number:      ${GITHUB_RUN_NUMBER}
+          cat <<EOF > README.md
+          Deployment of :    ${APP_VERSION}
+          
+          
           Timestamp:       $(date -u)
           EOF
 
@@ -281,7 +277,7 @@ jobs:
 
           git -c user.name="github-actions[bot]" \
               -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \
-              commit -m "Audit: metadata commit from ${ACTOR} via CI"
+              commit -m "Deployment of the ${APP_VERSION} by ${ACTOR} via CI"
 
           git push --force https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }} HEAD:$NEW_BRANCH
 
