@@ -7,7 +7,7 @@ on:
 
 permissions:
   id-token: write
-  contents: read
+  contents: write
 
 # GLOBAL ENV: Only GitHub secrets or constants
 env:
@@ -261,7 +261,7 @@ jobs:
       - name: Create and commit metadata
         run: |
           ACTOR="${GITHUB_ACTOR}"
-          NEW_BRANCH="PROD1"
+          NEW_BRANCH="PROD"
           git checkout -b $NEW_BRANCH
 
           echo "Recording metadata for workflow run..."
