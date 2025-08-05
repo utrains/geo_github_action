@@ -30,44 +30,34 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+      - name: Dump all env vars
+        run: printenv | sort
 
-      - name: Set up JDK 17
-        uses: actions/setup-java@v3
-        with:
-          distribution: 'temurin'
-          java-version: 17
-          cache: 'maven'
+      # - name: Set up JDK 17
+      #   uses: actions/setup-java@v3
+      #   with:
+      #     distribution: 'temurin'
+      #     java-version: 17
+      #     cache: 'maven'
 
-      - name: Cache Maven packages
-        uses: actions/cache@v4
-        with:
-          path: ~/.m2
-          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-          restore-keys: ${{ runner.os }}-m2
+      # - name: Cache Maven packages
+      #   uses: actions/cache@v4
+      #   with:
+      #     path: ~/.m2
+      #     key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+      #     restore-keys: ${{ runner.os }}-m2
 
-      - name: Build with Maven
-        run: mvn -B clean verify
+      # - name: Build with Maven
+      #   run: mvn -B clean verify
 
-      - name: Package with Maven
-        run: mvn -B clean package
+      # - name: Package with Maven
+      #   run: mvn -B clean package
 
-      - name: Upload JAR file
-        uses: actions/upload-artifact@v4
-        with:
-          name: geo_app-jar
-          path: target/*.jar
-
-      - name: Create and commit to new branch
-        run: |
-          NEW_BRANCH="feature/manual-${{ github.run_id }}"
-          git checkout -b $NEW_BRANCH
-
-          echo "Manual update from CI at $(date)" >> MANUAL_COMMIT.md
-          git add MANUAL_COMMIT.md
-
-          git commit -m "Manual commit from CI workflow"
-
-          git push origin $NEW_BRANCH
+      # - name: Upload JAR file
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: geo_app-jar
+      #     path: target/*.jar
 
   # sonar:
   #   runs-on: ubuntu-latest
