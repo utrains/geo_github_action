@@ -1,0 +1,57 @@
+name: Manual Kubernetes Deploy
+
+on:
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  ECR_ROLE: ${{ secrets.ECR_ACESS_ROLE }}
+  AWS_REGION: ${{ secrets.AWS_REGION }}
+  VAULT_URL: ${{ secrets.VAULT_URL }}
+
+jobs:
+  manual-deploy-to-k8s:
+    name: Deploy to Kubernetes (Manual)
+    runs-on: ubuntu-latest
+
+    environment:
+      name: production  # Requires GitHub environment with approval
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ env.ECR_ROLE }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Set up kubectl
+        uses: azure/setup-kubectl@v3
+        with:
+          version: 'latest'
+
+      - name: Setup kubeconfig for EKS
+        run: |
+          aws eks update-kubeconfig --name your-eks-cluster-name --region ${{ env.AWS_REGION }}
+
+      - name: Extract image info
+        id: metadata
+        run: |
+          APP_VERSION=$(grep -m2 '<version>' pom.xml | tail -1 | grep -oP '(?<=>).*(?=<)')
+          ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
+          IMAGE_REPO=$ACCOUNT_ID.${{ env.ECR_PATH }}.${{ env.AWS_REGION }}.${{ env.AWS_DOMAIN }}/geo_app
+
+          echo "APP_VERSION=$APP_VERSION" >> $GITHUB_ENV
+          echo "IMAGE_REPO=$IMAGE_REPO" >> $GITHUB_ENV
+
+      - name: Deploy Helm Chart
+        run: |
+          helm upgrade --install geo-app-release ./geo-app-chart \
+            --namespace default \
+            --set image.repository=$IMAGE_REPO \
+            --set image.tag=$APP_VERSION

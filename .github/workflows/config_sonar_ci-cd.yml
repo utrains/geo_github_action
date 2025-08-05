@@ -284,38 +284,38 @@ jobs:
             "$ARTIFACTORY_URL/artifactory/$HELM_REPO/${CHART_NAME}-$APP_VERSION.tgz"
 
 
-  manual-deploy-to-k8s:
-    name: Manual Deploy to Kubernetes
-    runs-on: ubuntu-latest
-    needs:
-      - helm-chart-create
-      - docker
-    if: github.event_name == 'workflow_dispatch'
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
+  # manual-deploy-to-k8s:
+  #   name: Manual Deploy to Kubernetes
+  #   runs-on: ubuntu-latest
+  #   needs:
+  #     - helm-chart-create
+  #     - docker
+  #   if: github.event_name == 'workflow_dispatch'
+  #   steps:
+  #     - name: Checkout Code
+  #       uses: actions/checkout@v4
 
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          role-to-assume: ${{ env.ECR_ROLE }}
-          aws-region: ${{ env.AWS_REGION }}
+  #     - name: Configure AWS Credentials
+  #       uses: aws-actions/configure-aws-credentials@v4
+  #       with:
+  #         role-to-assume: ${{ env.ECR_ROLE }}
+  #         aws-region: ${{ env.AWS_REGION }}
 
-      - name: Setup kubectl
-        uses: azure/setup-kubectl@v3
-        with:
-          version: 'latest'
+  #     - name: Setup kubectl
+  #       uses: azure/setup-kubectl@v3
+  #       with:
+  #         version: 'latest'
 
-      - name: Setup kubeconfig (example for EKS)
-        run: |
-          aws eks update-kubeconfig --name your-eks-cluster-name --region ${{ env.AWS_REGION }}
+  #     - name: Setup kubeconfig (example for EKS)
+  #       run: |
+  #         aws eks update-kubeconfig --name your-eks-cluster-name --region ${{ env.AWS_REGION }}
 
-      - name: Deploy Helm Chart
-        run: |
-          helm upgrade --install geo-app-release ./geo-app-chart \
-            --namespace default \
-            --set image.repository=${{ steps.image.outputs.image_repo }} \
-            --set image.tag=${{ steps.metadata.outputs.app_version }}
+  #     - name: Deploy Helm Chart
+  #       run: |
+  #         helm upgrade --install geo-app-release ./geo-app-chart \
+  #           --namespace default \
+  #           --set image.repository=${{ steps.image.outputs.image_repo }} \
+  #           --set image.tag=${{ steps.metadata.outputs.app_version }}
 
 
   # helm-chart-create:
