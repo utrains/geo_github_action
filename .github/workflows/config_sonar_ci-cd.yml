@@ -251,8 +251,14 @@ jobs:
         run: |
           rm -rf $CHART_NAME/templates/tests
           rm -f $CHART_NAME/templates/hpa.yaml $CHART_NAME/templates/ingress.yaml $CHART_NAME/templates/serviceaccount.yaml
+          
+          sed -i 's/- port: .*/- port: {{ .Values.container.port }}/' $CHART_NAME/templates/service.yaml
 
           yq e '.version = "0.1.0" | .appVersion = env(APP_VERSION)' -i $CHART_NAME/Chart.yaml
+
+          yq e '.service.type = "LoadBalancer" |
+                .service.port = 8087 |
+                .container.port = 80' -i $CHART_NAME/values.yaml
 
           yq e '.image.repository = env(IMAGE_REPO) |
                 .image.tag = env(APP_VERSION) |
@@ -269,7 +275,7 @@ jobs:
           cat <<EOF > README.md
           Deployment of :    ${APP_VERSION}
           
-          
+
           Timestamp:       $(date -u)
           EOF
 
