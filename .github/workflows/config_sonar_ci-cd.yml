@@ -244,7 +244,7 @@ jobs:
       - name: Customize Helm chart
         run: |
           rm -rf $CHART_NAME/templates/tests
-          rm -f $CHART_NAME/templates/hpa.yaml $CHART_NAME/templates/ingress.yaml $CHART_NAME/templates/serviceaccount.yaml
+          rm -f $CHART_NAME/templates/hpa.yaml $CHART_NAME/templates/ingress.yaml
           
           sed -i 's/- port: .*/- port: {{ .Values.container.port }}/' $CHART_NAME/templates/service.yaml
 
