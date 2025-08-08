@@ -93,13 +93,7 @@ jobs:
           SONAR_HOST_URL: ${{ env.SONAR_HOST_URL }}
         run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=geo_app -Dsonar.qualitygate.wait=true # Replace 'geo_app' with your actual project key
       
-      # - name: Verify Quality Gate Status
-      #   uses: sonarsource/sonarqube-quality-gate-action@master
-      #   with:
-      #       scanMetadataReportFile: .scannerwork/report-task.txt
-      #       sonarToken: ${{ secrets.SONAR_TOKEN }}
-      #       timeoutMinutes: 5
-      #       sleepTime: 10  # Seconds between status checks
+    
     
 
 
