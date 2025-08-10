@@ -1,3 +1,4 @@
+# Geolocation Project 
 ### Prerequisites:
 - Have **AWS CLI** and **eksctl** installed
 - Have an AWS account with sufficient IAM permissions to create clusters, IAM roles, and EBS volumes
